@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ view.object|default:"Создание" }} получателя{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ view.object|default:"Создание" }} получателя</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    <a href="/recipients/" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

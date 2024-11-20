@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Детали рассылки{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Детали рассылки</h1>
+<ul class="list-group">
+    <li class="list-group-item"><strong>ID:</strong> {{ campaign.id }}</li>
+    <li class="list-group-item"><strong>Статус:</strong> {{ campaign.status }}</li>
+    <li class="list-group-item"><strong>Дата начала:</strong> {{ campaign.start_date }}</li>
+    <li class="list-group-item"><strong>Дата окончания:</strong> {{ campaign.end_date }}</li>
+    <li class="list-group-item"><strong>Сообщение:</strong> {{ campaign.message.subject }}</li>
+    <li class="list-group-item"><strong>Получатели:</strong>
+        <ul>
+            {% for recipient in campaign.recipients.all %}
+                <li>{{ recipient.full_name }} ({{ recipient.email }})</li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+<a href="/campaigns/" class="btn btn-secondary mt-3">Назад</a>
+{% endblock %}

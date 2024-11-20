@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Список рассылок{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Список рассылок</h1>
+<a href="{% url 'campaign_create' %}" class="btn btn-primary mb-3">Создать рассылку</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Статус</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+            <th>Сообщение</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for campaign in campaigns %}
+            <tr>
+                <td>{{ campaign.id }}</td>
+                <td>{{ campaign.status }}</td>
+                <td>{{ campaign.start_date }}</td>
+                <td>{{ campaign.end_date }}</td>
+                <td>{{ campaign.message.subject }}</td>
+                <td>
+                    <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-info btn-sm">Детали</a>
+                    <a href="{% url 'campaign_edit' campaign.pk %}" class="btn btn-warning btn-sm">Редактировать</a>
+                    <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
