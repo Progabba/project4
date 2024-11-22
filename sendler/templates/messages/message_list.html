@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="mb-4">Список сообщений</h1>
-<a href="{% url 'message_create' %}" class="btn btn-primary mb-3">Добавить сообщение</a>
+<a href="{% url 'sendler:message_create' %}" class="btn btn-primary mb-3">Добавить сообщение</a>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -21,8 +21,8 @@
                 <td>{{ message.subject }}</td>
                 <td>{{ message.body|truncatewords:10 }}</td>
                 <td>
-                    <a href="{% url 'message_edit' message.pk %}" class="btn btn-warning btn-sm">Редактировать</a>
-                    <a href="{% url 'message_delete' message.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+                    <a href="{% url 'sendler:message_edit' message.pk %}" class="btn btn-warning btn-sm">Редактировать</a>
+                    <a href="{% url 'sendler:message_delete' message.pk %}" class="btn btn-danger btn-sm">Удалить</a>
                 </td>
             </tr>
         {% endfor %}

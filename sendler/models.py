@@ -1,5 +1,5 @@
 from django.db import models
-
+# Управление клиентами
 class Recipient(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=255, verbose_name="Ф.И.О.")
@@ -9,6 +9,7 @@ class Recipient(models.Model):
         return f"{self.full_name} ({self.email})"
 
 
+# Управление сообщениями
 class Message(models.Model):
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     body = models.TextField(verbose_name="Тело письма")
@@ -16,6 +17,8 @@ class Message(models.Model):
     def __str__(self):
         return self.subject
 
+
+# Управление рассылками
 class Mailing(models.Model):
     STATUS_CHOICES = [
         ("created", "Создана"),
@@ -34,6 +37,8 @@ class Mailing(models.Model):
     def __str__(self):
         return f"Рассылка {self.pk} ({self.get_status_display()})"
 
+
+# Попытка рассылок
 class MailingAttempt(models.Model):
     STATUS_CHOICES = [
         ("success", "Успешно"),
