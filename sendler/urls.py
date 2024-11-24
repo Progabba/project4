@@ -2,7 +2,8 @@ from django.urls import path
 
 from sendler.views import RecipientListView, RecipientCreateView, RecipientUpdateView, RecipientDeleteView, \
     MessageListView, MessageCreateView, MessageUpdateView, MessageDeleteView, CampaignListView, CampaignCreateView, \
-    CampaignDetailView, CampaignUpdateView, CampaignDeleteView, SendMailingView, home_view
+    CampaignDetailView, CampaignUpdateView, CampaignDeleteView, SendMailingView, home_view, mailing_statistics, \
+    block_user, toggle_mailing
 from .apps import SendlerConfig
 
 app_name = SendlerConfig.name
@@ -28,4 +29,8 @@ urlpatterns = [
     path("campaigns/<int:pk>/delete/", CampaignDeleteView.as_view(), name="campaign_delete"),
 
     path('', home_view, name='home'),
+
+    path("mailing-statistics/", mailing_statistics, name="mailing_statistics"),
+
+
 ]

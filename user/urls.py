@@ -3,6 +3,7 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
 
+from sendler.views import block_user, toggle_mailing
 from .apps import UserConfig
 from .views import UserCreateView, email_verification
 
@@ -34,5 +35,8 @@ urlpatterns = [
     path('password-reset/complete/',
          PasswordResetCompleteView.as_view(template_name="user/password_reset_complete.html"),
          name='password_reset_complete'),
+
+    path('block_user/<int:user_id>/', block_user, name='block_user'),
+    path('toggle_mailing/<int:mailing_id>/', toggle_mailing, name='toggle_mailing'),
 
 ]

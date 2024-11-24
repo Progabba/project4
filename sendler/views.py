@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
@@ -6,13 +7,22 @@ from django.contrib import messages
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views.decorators.cache import cache_page
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+from user.models import User
 from .models import Recipient, Message, Mailing, MailingAttempt
 from .forms import RecipientForm, MessageForm, CampaignForm
 from django.views import View
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import datetime
+
+from django.shortcuts import render
+from django.db.models import Count, Q
+
+from django.utils.decorators import method_decorator
+
 
 
 # Список клиентов
@@ -174,6 +184,7 @@ class CampaignDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 # Детали рассылки
+@method_decorator(cache_page(60 * 15), name='dispatch')  # Кеширование на 15 минут
 class CampaignDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     template_name = "campaigns/campaign_detail.html"
@@ -238,3 +249,71 @@ def home_view(request):
     }
 
     return render(request, 'home.html', context)
+
+def mailing_statistics(request):
+    # Проверка, состоит ли пользователь в группе "Менеджер"
+    is_manager = request.user.groups.filter(name="менеджер").exists()
+
+    if is_manager:
+        # Для менеджера: статистика по каждому пользователю
+        user_stats = (
+            MailingAttempt.objects.values("mailing__user__email")  # Используем email вместо username
+            .annotate(
+                total_attempts=Count("id"),
+                successful_attempts=Count("id", filter=Q(status="success")),
+                failed_attempts=Count("id", filter=Q(status="failure")),
+            )
+        )
+        stats = None  # Менеджеру общая статистика не нужна
+    else:
+        # Для обычного пользователя: только его статистика
+        stats = MailingAttempt.objects.filter(mailing__user=request.user).aggregate(
+            total_attempts=Count("id"),
+            successful_attempts=Count("id", filter=Q(status="success")),
+            failed_attempts=Count("id", filter=Q(status="failure")),
+        )
+        user_stats = None  # Для обычного пользователя детализация по всем пользователям не нужна
+
+    context = {
+        "stats": stats,
+        "user_stats": user_stats,
+        "is_manager": is_manager,
+    }
+    return render(request, "mailing_statistics.html", context)
+
+
+# Проверка, состоит ли пользователь в группе "Менеджер"
+def is_manager(user):
+    return user.groups.filter(name='менеджер').exists()
+
+
+# Представление для блокировки/разблокировки пользователя
+@user_passes_test(is_manager)
+def block_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    # Меняем статус пользователя
+    user.is_active = not user.is_active  # Если активен, заблокируем; если заблокирован, активируем
+    user.save()
+
+    # Добавляем сообщение об успешной блокировке/разблокировке
+    action = "разблокирован" if user.is_active else "заблокирован"
+    messages.success(request, f"Пользователь {user.email} был {action}.")
+
+    return redirect('user:users_list')  # Перенаправление на страницу (например, список пользователей)
+
+
+# Представление для отключения/включения рассылки
+@user_passes_test(is_manager)
+def toggle_mailing(request, mailing_id):
+    mailing = get_object_or_404(Mailing, pk=mailing_id)
+
+    # Меняем активность рассылки
+    mailing.is_active = not mailing.is_active  # Если активна, деактивируем; если неактивна, активируем
+    mailing.save()
+
+    # Добавляем сообщение об успешной деактивации/активации рассылки
+    action = "деактивирована" if not mailing.is_active else "активирована"
+    messages.success(request, f"Рассылка '{mailing.title}' была {action}.")
+
+    return redirect('user:mailing_list')  # Перенаправление на страницу (например, список рассылок)
