@@ -25,6 +25,9 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'user:register'%}">Регистрация</a></li>
                     {% endif %}
                 </ul>
+                 {% if user.is_authenticated %}
+            <span class="navbar-text ms-auto">{{ user.email }}</span>
+            {% endif %}
             </div>
         </div>
     </nav>

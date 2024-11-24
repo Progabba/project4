@@ -5,4 +5,6 @@
     {{ form.non_field_errors }} <!-- Ошибки, которые не связаны с конкретными полями формы -->
     {{ form.as_p }}
     <button type="submit">Войти</button>
+    <p><a href="{% url 'user:password_reset' %}">Забыли пароль?</a></p>
+
 </form>

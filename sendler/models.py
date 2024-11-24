@@ -8,6 +8,14 @@ class Recipient(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=255, verbose_name="Ф.И.О.")
     comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
+    user = models.ForeignKey(
+        User,  # Ссылаемся на кастомную модель User
+        on_delete=models.CASCADE,  # При удалении пользователя удаляем все его рассылки
+        verbose_name="Пользователь",  # Человекочитаемое имя поля
+        related_name="recipients",  # Связь для обратного доступа через пользователя
+        null=True,  # Разрешаем пустые значения
+        blank=True,  # Разрешаем оставлять поле пустым в формах
+    )
 
     def __str__(self):
         return f"{self.full_name} ({self.email})"
@@ -17,6 +25,15 @@ class Recipient(models.Model):
 class Message(models.Model):
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     body = models.TextField(verbose_name="Тело письма")
+
+    user = models.ForeignKey(
+        User,  # Ссылаемся на кастомную модель User
+        on_delete=models.CASCADE,  # При удалении пользователя удаляем все его рассылки
+        verbose_name="Пользователь",  # Человекочитаемое имя поля
+        related_name="messages",  # Связь для обратного доступа через пользователя
+        null=True,  # Разрешаем пустые значения
+        blank=True,  # Разрешаем оставлять поле пустым в формах
+    )
 
     def __str__(self):
         return self.subject

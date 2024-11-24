@@ -10,6 +10,8 @@ from user.forms import RegistrationForm
 from user.models import User
 
 
+
+
 class UserCreateView(CreateView):
     model = User
     form_class = RegistrationForm
@@ -25,7 +27,7 @@ class UserCreateView(CreateView):
         url = f'http://{host}/user/email-conform/{token}/'
         send_mail(
             subject="Подтверждение почты",
-            message=f"Привет, переходи по ссылке быстро{url}",
+            message=f"Привет, переходи по ссылке быстро {url}",
             from_email=EMAIL_HOST_USER,
             recipient_list=[user.email]
         )
@@ -36,4 +38,9 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
     return redirect(reverse('user:login'))
+
+
+
+
+
 
