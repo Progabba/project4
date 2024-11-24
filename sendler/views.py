@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -18,21 +19,21 @@ class RecipientListView(ListView):
     context_object_name = "recipients"
 
 # Создание клиента
-class RecipientCreateView(CreateView):
+class RecipientCreateView(LoginRequiredMixin, CreateView):
     model = Recipient
     form_class = RecipientForm
     template_name = "recipients/recipient_form.html"
     success_url = reverse_lazy('sendler:recipient_list')  # Используем reverse_lazy для отложенного реверса
 
 # Редактирование клиента
-class RecipientUpdateView(UpdateView):
+class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     model = Recipient
     form_class = RecipientForm
     template_name = "recipients/recipient_form.html"
     success_url = reverse_lazy('sendler:recipient_list')  # Используем reverse_lazy для отложенного реверса
 
 # Удаление клиента
-class RecipientDeleteView(DeleteView):
+class RecipientDeleteView(LoginRequiredMixin, DeleteView):
     model = Recipient
     template_name = "recipients/recipient_confirm_delete.html"
     success_url = reverse_lazy('sendler:recipient_list')  # Используем reverse_lazy для отложенного реверса
@@ -44,21 +45,21 @@ class MessageListView(ListView):
     context_object_name = "messages"
 
 # Создание сообщения
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     template_name = "messages/message_form.html"
     success_url = reverse_lazy('sendler:message_list')
 
 # Редактирование сообщения
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
     template_name = "messages/message_form.html"
     success_url = reverse_lazy('sendler:message_list')
 
 # Удаление сообщения
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = "messages/message_confirm_delete.html"
     success_url = reverse_lazy('sendler:message_list')
@@ -70,27 +71,27 @@ class CampaignListView(ListView):
     context_object_name = "campaigns"
 
 # Создание рассылки
-class CampaignCreateView(CreateView):
+class CampaignCreateView(LoginRequiredMixin, CreateView):
     model = Mailing
     form_class = CampaignForm
     template_name = "campaigns/campaign_form.html"
     success_url = reverse_lazy('sendler:campaign_list')
 
 # Редактирование рассылки
-class CampaignUpdateView(UpdateView):
+class CampaignUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     form_class = CampaignForm
     template_name = "campaigns/campaign_form.html"
     success_url = reverse_lazy('sendler:campaign_list')
 
 # Удаление рассылки
-class CampaignDeleteView(DeleteView):
+class CampaignDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = "campaigns/campaign_confirm_delete.html"
     success_url = reverse_lazy('sendler:campaign_list')
 
 # Детали рассылки
-class CampaignDetailView(DetailView):
+class CampaignDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     template_name = "campaigns/campaign_detail.html"
     context_object_name = "campaign"

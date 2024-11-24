@@ -1,4 +1,8 @@
 from django.db import models
+
+from user.models import User
+
+
 # Управление клиентами
 class Recipient(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
@@ -33,6 +37,14 @@ class Mailing(models.Model):
     )
     message = models.ForeignKey("Message", on_delete=models.CASCADE, verbose_name="Сообщение")
     recipients = models.ManyToManyField("Recipient", verbose_name="Получатели")
+    user = models.ForeignKey(
+        User,  # Ссылаемся на кастомную модель User
+        on_delete=models.CASCADE,  # При удалении пользователя удаляем все его рассылки
+        verbose_name="Пользователь",  # Человекочитаемое имя поля
+        related_name="mailings",  # Связь для обратного доступа через пользователя
+        null=True,  # Разрешаем пустые значения
+        blank=True,  # Разрешаем оставлять поле пустым в формах
+    )
 
     def __str__(self):
         return f"Рассылка {self.pk} ({self.get_status_display()})"
